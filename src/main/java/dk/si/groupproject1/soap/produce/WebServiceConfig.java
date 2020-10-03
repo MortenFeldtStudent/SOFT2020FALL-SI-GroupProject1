@@ -1,4 +1,4 @@
-package dk.si.groupproject1.soap;
+package dk.si.groupproject1.soap.produce;
 
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;

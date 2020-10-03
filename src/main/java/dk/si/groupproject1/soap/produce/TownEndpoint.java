@@ -1,4 +1,4 @@
-package dk.si.groupproject1.soap;
+package dk.si.groupproject1.soap.produce;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
@@ -44,4 +44,5 @@ public class TownEndpoint {
         response.setTown(townRepository.findTown(request.getZipCode()));
         return response;
     }
+
 }

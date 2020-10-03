@@ -1,4 +1,4 @@
-package dk.si.groupproject1.soap;
+package dk.si.groupproject1.soap.produce;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -32,10 +32,12 @@ public class TownRepository {
         valby.setZipCode(2500);
 
         towns.put(valby.getZipCode(), valby);
+
     }
 
     public Town findTown(Integer zipCode) {
         Assert.notNull(zipCode, "The town's zip code must not be null");
         return towns.get(zipCode);
     }
+
 }
