@@ -1,6 +1,8 @@
 package dk.si.groupproject1.rest.domain;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -10,7 +12,6 @@ public class PersonSummary extends PersonIdentifier{
     private Long yearOfBirth;
     private Long zipCode;
 
-    //@Builder
     public PersonSummary(Long id, String fullName, Long yearOfBirth, Long zipCode){
         super(id);
         this.fullName = fullName;

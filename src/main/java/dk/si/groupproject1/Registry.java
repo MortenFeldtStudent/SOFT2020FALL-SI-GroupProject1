@@ -1,4 +1,6 @@
-package dk.si.groupproject1.rmi;
+package dk.si.groupproject1;
+
+import dk.si.groupproject1.rmi.MethodImpl;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;

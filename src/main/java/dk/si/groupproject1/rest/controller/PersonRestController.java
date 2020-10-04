@@ -1,16 +1,15 @@
 package dk.si.groupproject1.rest.controller;
 
+import dk.si.groupproject1.exceptions.PersonNotFoundException;
+import dk.si.groupproject1.rest.domain.CreatePerson;
 import dk.si.groupproject1.rest.domain.PersonDetails;
 import dk.si.groupproject1.rest.domain.PersonSummary;
-import dk.si.groupproject1.rest.model.Person;
-import dk.si.groupproject1.rest.repository.PersonRepository;
+import dk.si.groupproject1.rest.domain.UpdatePerson;
 import dk.si.groupproject1.service.PersonService;
-import dk.si.groupproject1.service.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/persons")
@@ -20,14 +19,12 @@ public class PersonRestController {
     PersonService service;
 
     @GetMapping("/summary")
-    public List<PersonSummary> retrieveAllPersonList()
-    {
+    public List<PersonSummary> retrieveAllPersonList() {
         return service.summaryOfPersons();
     }
 
     @GetMapping("/{id}/summary")
-    public PersonSummary retrievePersonSummary(@PathVariable long id)
-    {
+    public PersonSummary retrievePersonSummary(@PathVariable long id) throws PersonNotFoundException {
         return service.summaryOfPerson(id);
     }
 
@@ -36,9 +33,18 @@ public class PersonRestController {
         return service.detailsOfPerson(id);
     }
 
-    @PutMapping("/{id}")
-    public PersonDetails editPerson(@RequestBody Person p, @PathVariable long id) throws Exception {
+    @PostMapping("/")
+    public String createPerson(@RequestBody CreatePerson p) {
         return service.createPerson(p);
     }
 
+    @PutMapping("/{id}")
+    public PersonSummary editPerson(@RequestBody UpdatePerson p, @PathVariable long id) {
+        return service.updatePerson(p, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deletePerson(@PathVariable long id) {
+        return service.deletePerson(id);
+    }
 }

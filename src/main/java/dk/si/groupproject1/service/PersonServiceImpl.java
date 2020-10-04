@@ -1,10 +1,12 @@
 package dk.si.groupproject1.service;
 
-import dk.si.groupproject1.rest.domain.PersonDetails;
-import dk.si.groupproject1.rest.domain.PersonSummary;
+import dk.si.groupproject1.exceptions.PersonNotFoundException;
+import dk.si.groupproject1.rest.domain.*;
 import dk.si.groupproject1.rest.model.Person;
 import dk.si.groupproject1.rest.repository.PersonRepository;
 import dk.si.groupproject1.rmi.Methods;
+import dk.si.groupproject1.soap.consume.TownClient;
+import localhost._8080.GetTownResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,16 +22,16 @@ public class PersonServiceImpl implements PersonService{
     @Autowired
     PersonRepository repo;
 
-    Person findPersonById(long id){
+    @Autowired
+    TownClient townClient;
+
+    Person findPersonById(long id) throws PersonNotFoundException{
         Person p = null;
 
         Optional<Person> personOptional = repo.findById(id);
         if(personOptional.isPresent()){
             p = personOptional.get();
-        } else {
-            System.out.println("TEST ERROR");
         }
-
         return p;
     }
 
@@ -45,7 +47,18 @@ public class PersonServiceImpl implements PersonService{
     }
 
     @Override
-    public PersonSummary summaryOfPerson(long id) {
+    public TownAndCity townAndCityForPerson(long zipCode) {
+
+        //TownClient townClient = new TownClient();
+        GetTownResponse getTownResponse = townClient.getTown((int) zipCode);
+        return new TownAndCity(
+                getTownResponse.getTown().getName(),
+                getTownResponse.getTown().getCountry()
+        );
+    }
+
+    @Override
+    public PersonSummary summaryOfPerson(long id) throws PersonNotFoundException {
 
         Person p = findPersonById(id);
 
@@ -79,32 +92,53 @@ public class PersonServiceImpl implements PersonService{
     @Override
     public PersonDetails detailsOfPerson(long id) throws Exception {
         Person p = findPersonById(id);
+        TownAndCity townAndCity = townAndCityForPerson(p.getZipCode());
 
         PersonDetails detailsOfPerson = new PersonDetails(
                 p.getId(),
                 p.getFullName(),
                 p.getYearOfBirth(),
-                p.getAge(),
+                calculateAge(p.getYearOfBirth()),
                 p.getZipCode(),
-                p.getTown(),
-                p.getCountry()
+                townAndCity.getTown(),
+                townAndCity.getCountry()
         );
         return detailsOfPerson;
     }
 
     @Override
-    public PersonDetails createPerson(Person p) throws Exception {
-        p.setAge(calculateAge(p.getYearOfBirth()));
-        Person savedEntity = repo.save(p);
-        PersonDetails detailsOfPerson = new PersonDetails(
+    public String createPerson(CreatePerson p) {
+        Person newEntity = new Person();
+        newEntity.setFullName(p.getFullName());
+        newEntity.setYearOfBirth(p.getYearOfBirth());
+        newEntity.setZipCode(p.getZipCode());
+        Person savedEntity = repo.save(newEntity);
+        return "Record saved with ID: " + savedEntity.getId();
+    }
+
+    @Override
+    public PersonSummary updatePerson(UpdatePerson p, long id) {
+        Person updateEntity = new Person(
+                id,
+                p.getFullName(),
+                p.getYearOfBirth(),
+                p.getZipCode()
+        );
+        Person savedEntity = repo.save(updateEntity);
+        PersonSummary summaryOfUpdatedPerson = new PersonSummary(
                 savedEntity.getId(),
                 savedEntity.getFullName(),
                 savedEntity.getYearOfBirth(),
-                savedEntity.getAge(),
-                savedEntity.getZipCode(),
-                savedEntity.getTown(),
-                savedEntity.getCountry()
+                savedEntity.getZipCode()
         );
-        return detailsOfPerson;
+        return summaryOfUpdatedPerson;
     }
+
+    @Override
+    public String deletePerson(long id) {
+        repo.deleteById(id);
+        return "Record deleted with ID: " + id;
+    }
+
+
 }

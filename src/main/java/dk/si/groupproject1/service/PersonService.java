@@ -1,15 +1,17 @@
 package dk.si.groupproject1.service;
 
-import dk.si.groupproject1.rest.domain.PersonDetails;
-import dk.si.groupproject1.rest.domain.PersonSummary;
-import dk.si.groupproject1.rest.model.Person;
+import dk.si.groupproject1.exceptions.PersonNotFoundException;
+import dk.si.groupproject1.rest.domain.*;
 
 import java.util.List;
 
 public interface PersonService {
     long calculateAge(long yearOfBirth) throws Exception;
-    PersonSummary summaryOfPerson(long id);
+    TownAndCity townAndCityForPerson(long zipCode);
+    PersonSummary summaryOfPerson(long id) throws PersonNotFoundException;
     List<PersonSummary> summaryOfPersons();
     PersonDetails detailsOfPerson(long id) throws Exception;
-    PersonDetails createPerson(Person p) throws Exception;
+    String createPerson(CreatePerson p);
+    PersonSummary updatePerson(UpdatePerson p, long id);
+    String deletePerson(long id);
 }

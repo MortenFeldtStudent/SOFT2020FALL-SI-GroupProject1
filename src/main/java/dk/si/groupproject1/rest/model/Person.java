@@ -1,15 +1,14 @@
 package dk.si.groupproject1.rest.model;
 
-import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Person {
     @Id
@@ -17,8 +16,5 @@ public class Person {
     private long id;
     private String fullName;
     private long yearOfBirth;
-    private long age;
     private long zipCode;
-    private String town;
-    private String country;
 }
